@@ -37,7 +37,7 @@ fun BottomNav(navController: NavHostController)
         {
             composable(route = Routes.Home.routes)
             {
-                Home()
+                Home(navController)
             }
 
             composable(Routes.Profile.routes)
@@ -54,13 +54,13 @@ fun BottomNav(navController: NavHostController)
 
             composable(Routes.Search.routes)
             {
-                Search()
+                Search(navController)
 
             }
 
-            composable(Routes.AddThreads.routes)
+            composable(Routes.AddThread.routes)
             {
-                AddThreads()
+                AddThreads(navController1)
 
             }
 
@@ -97,7 +97,7 @@ fun MyBottomBar(navController1: NavHostController)
         BottomNavItem
         (
             title = "Add Threads",
-            Routes.AddThreads.routes,
+            Routes.AddThread.routes,
             Icons.Rounded.Add
         ),
 

@@ -3,6 +3,7 @@ package com.example.chatfusion.screens
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -23,7 +24,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,13 +44,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.chatfusion.R
+import com.example.chatfusion.navigation.Routes
 import com.example.chatfusion.utils.SharedPref
+import com.example.chatfusion.viewmodel.AddThreadViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun AddThreads()
+fun AddThreads(navHostController: NavHostController)
 {
+    val threadViewModel : AddThreadViewModel = viewModel()
+    val isPosted by threadViewModel.isPosted.observeAsState(false)
+
 
     val context = LocalContext.current
 
@@ -92,6 +103,27 @@ fun AddThreads()
         }
     }
 
+   LaunchedEffect(isPosted ) {
+       if (isPosted!!)
+       {
+           thread = ""
+           imageUri = null
+           Toast.makeText(context, "thread added", Toast.LENGTH_SHORT).show()
+
+           navHostController.navigate(Routes.Home.routes){
+               popUpTo(Routes.AddThread.routes)
+               {
+                   inclusive = true
+               }
+
+           }
+       }
+
+
+   }
+
+
+
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
@@ -114,6 +146,14 @@ fun AddThreads()
                  }
                  .clickable {
 
+                     navHostController.navigate(Routes.Home.routes){
+                         popUpTo(Routes.AddThread.routes)
+                         {
+                             inclusive = true
+                         }
+
+                     }
+
                  })
 
         Text(
@@ -132,7 +172,7 @@ fun AddThreads()
             modifier = Modifier
                 .constrainAs(logo)
                 {
-                    top.linkTo(text.bottom)
+                    top.linkTo(text.bottom, margin = 8.dp)
                     start.linkTo(parent.start)
 
                 }
@@ -238,7 +278,21 @@ fun AddThreads()
             }
         )
 
-        TextButton(onClick = { /*TODO*/ }, modifier = Modifier.constrainAs(button){
+        TextButton(onClick = {
+            if(imageUri == null)
+            {
+                threadViewModel.saveData(thread, FirebaseAuth.getInstance().currentUser!!.uid, "")
+            }
+            else
+            {
+                threadViewModel.saveImage(thread, FirebaseAuth.getInstance().currentUser!!.uid, imageUri!!)
+
+            }
+
+
+
+
+        }, modifier = Modifier.constrainAs(button){
             end.linkTo(parent.end,margin = 12.dp )
             bottom.linkTo(parent.bottom, margin = 12.dp)
         })
@@ -285,5 +339,5 @@ fun BasicTextFieldWithHint(hint : String,
 
 fun AddPostView()
 {
-    AddThreads()
+   // AddThreads()
 }

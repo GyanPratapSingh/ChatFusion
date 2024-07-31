@@ -1,7 +1,6 @@
 package com.example.chatfusion.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,7 +29,7 @@ fun NavGraph(navController: NavHostController)
 
       composable(Routes.Home.routes)
       {
-          Home()
+          Home(navController)
 
       }
 
@@ -48,13 +47,13 @@ fun NavGraph(navController: NavHostController)
 
       composable(Routes.Search.routes)
       {
-          Search()
+          Search(navController)
 
       }
 
-      composable(Routes.AddThreads.routes)
+      composable(Routes.AddThread.routes)
       {
-          AddThreads()
+          AddThreads(navController)
 
       }
 

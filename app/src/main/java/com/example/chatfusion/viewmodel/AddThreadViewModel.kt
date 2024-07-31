@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.chatfusion.model.ThreadModel
 import com.example.chatfusion.model.UserModel
 import com.example.chatfusion.utils.SharedPref
 import com.google.firebase.Firebase
@@ -30,7 +31,7 @@ class AddThreadViewModel : ViewModel() {
     val isPosted: LiveData<Boolean> = _isPosted
 
 
-    private fun saveImage(
+     fun saveImage(
         thread: String,
         userId: String,
         imageUri: Uri
@@ -45,35 +46,24 @@ class AddThreadViewModel : ViewModel() {
         }
     }
 
-    private fun saveData(
+     fun saveData(
                          thread: String,
                          userId: String,
                          image: String
 
     ){
-        val userData = UserModel(email, password, fullName, role, imageUrl, uid!!)
+        val threadData = ThreadModel(thread, image, userId, System.currentTimeMillis().toString())
 
-        userRef.child(uid).setValue(userData)
+        userRef.child(userRef.push().key!!).setValue(threadData)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful)
                 {
-                    SharedPref.storeData(fullName, email, role, imageUrl, context)
-
-
+                    _isPosted.postValue(true)
                 }
                 else
                 {
-                    // Handle the failure of the setValue operation
+                    _isPosted.postValue(false)
                 }
             }
     }
-     @SuppressLint("NullSafeMutableLiveData")
-     fun logout()
-     {
-         auth.signOut()
-         _firebaseUser.postValue(null)
-     }
-
-
-
-}
+  }

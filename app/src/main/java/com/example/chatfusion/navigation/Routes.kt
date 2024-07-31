@@ -7,7 +7,7 @@ package com.example.chatfusion.navigation
      object Profile : Routes("profile")
      object  Search : Routes("search")
      object Splash : Routes("splash")
-     object AddThreads : Routes("add_threads")
+     object AddThread : Routes("add_threads")
      object BottomNav : Routes("bottom_nav")
      object Login : Routes("login")
      object Register : Routes("register")
