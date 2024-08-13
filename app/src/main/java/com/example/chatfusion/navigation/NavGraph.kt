@@ -9,6 +9,7 @@ import com.example.chatfusion.screens.BottomNav
 import com.example.chatfusion.screens.Home
 import com.example.chatfusion.screens.Login
 import com.example.chatfusion.screens.Notification
+import com.example.chatfusion.screens.OtherUsers
 import com.example.chatfusion.screens.Profile
 import com.example.chatfusion.screens.Register
 import com.example.chatfusion.screens.Search
@@ -75,7 +76,12 @@ fun NavGraph(navController: NavHostController)
 
       }
 
+      composable(Routes.OtherUsers.routes)
+      {
+       val data = it.arguments!!.getString("data")
+          OtherUsers(navController, data!!)
 
-      
+     }
+
   }
 }

@@ -1,6 +1,5 @@
 package com.example.chatfusion.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,39 +33,39 @@ import com.example.chatfusion.viewmodel.AuthViewModel
 import com.example.chatfusion.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 
-@SuppressLint("SuspiciousIndentation")
 @Composable
-fun Profile(navHostController: NavHostController) {
+fun OtherUsers(navHostController: NavHostController, uid :String)
+{
 
     val context = LocalContext.current
 
     val authViewModel: AuthViewModel = viewModel()
     val firebaseUser by authViewModel.firebaseUser.observeAsState(null)
 
-    val userViewModel: UserViewModel= viewModel()
+    val userViewModel: UserViewModel = viewModel()
     val threads by userViewModel.threads.observeAsState(null)
-
+    val users by userViewModel.users.observeAsState(null)
     val followerList by userViewModel.followerList.observeAsState(null)
     val followingList by userViewModel.followingList.observeAsState(null)
+
+
+
+
+    val user = UserModel(
+        fullName = SharedPref.getFullName(context),
+        imageUrl = SharedPref.getImage(context)
+
+    )
+
+    userViewModel.fetchThreads(uid)
+    userViewModel.fetchUsers(uid)
+    userViewModel.getfollowers(uid)
+    userViewModel.getfollowing(uid)
 
     var currentUserId = ""
     if (FirebaseAuth.getInstance().currentUser!= null)
         currentUserId = FirebaseAuth.getInstance().currentUser!!.uid
 
-     if (currentUserId != "") {
-         userViewModel.getfollowers(currentUserId)
-         userViewModel.getfollowing(currentUserId)
-     }
-
-
-     val user = UserModel(
-        fullName = SharedPref.getFullName(context),
-         imageUrl = SharedPref.getImage(context)
-
-     )
-
-    if (firebaseUser != null)
-    userViewModel.fetchThreads(firebaseUser!!.uid)
 
 
 
@@ -101,7 +100,7 @@ fun Profile(navHostController: NavHostController) {
 
 
                 Text(
-                    text = SharedPref.getEmail(context), style = TextStyle(
+                    text = users!!.fullName, style = TextStyle(
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 24.sp
                     ), modifier = Modifier.constrainAs(text) {
@@ -110,30 +109,25 @@ fun Profile(navHostController: NavHostController) {
                     }
                 )
 
-                ConstraintLayout(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    val (logo) = createRefs()
+                Image(painter = rememberAsyncImagePainter(model = users!!.imageUrl),
+                    contentDescription = "close",
+                    modifier = Modifier
+                        .constrainAs(logo)
+                        {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.end)
 
-                    Image(
-                        painter = rememberAsyncImagePainter(model = SharedPref.getImage(context)),
-                        contentDescription = "close",
-                        modifier = Modifier
-                            .constrainAs(logo) {
-                                top.linkTo(parent.top)
-                                end.linkTo(parent.end, margin = 16.dp) // Adjust margin as needed
-                            }
-                            .size(120.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                        }
+                        .size(120.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
 
 
+                )
 
 
                 Text(
-                    text = SharedPref.getFullName(context),
+                    text =  users!!.fullName,
                     style = TextStyle(
                         fontSize = 20.sp
                     ),
@@ -144,7 +138,7 @@ fun Profile(navHostController: NavHostController) {
                 )
 
                 Text(
-                    text = SharedPref.getRole(context),
+                    text =  users!!.role,
                     style = TextStyle(
                         fontSize = 20.sp
                     ),
@@ -155,7 +149,7 @@ fun Profile(navHostController: NavHostController) {
                 )
 
                 Text(
-                    text = "${followerList!!.size} followers",
+                    text = "${followerList?.size} followers",
                     style = TextStyle(
                         fontSize = 20.sp
                     ),
@@ -166,7 +160,7 @@ fun Profile(navHostController: NavHostController) {
                 )
 
                 Text(
-                    text = "${followingList!!.size} following",
+                    text = "${followingList?.size} following",
                     style = TextStyle(
                         fontSize = 20.sp
                     ),
@@ -177,7 +171,8 @@ fun Profile(navHostController: NavHostController) {
                 )
 
                 ElevatedButton(onClick = {
-                    authViewModel.logout()
+                     if (currentUserId != "")
+                    userViewModel.followUsers(uid, currentUserId)
 
                 }, modifier = Modifier.constrainAs(button){
                     top.linkTo(following.bottom)
@@ -186,7 +181,7 @@ fun Profile(navHostController: NavHostController) {
                 }
                 )
                 {
-                    Text(text ="Logout")
+                    Text(text = if (followerList != null && followingList!!.isNotEmpty() && followerList!!.contains(currentUserId))"Following" else "follow")
 
                 }
 
@@ -196,17 +191,26 @@ fun Profile(navHostController: NavHostController) {
 
 
         }
-        items(threads ?: emptyList()){
-            pair ->
-            ThreadItem(
-                thread = pair,
-                users = user,
-                navHostController = navHostController,
-                userId = SharedPref.getFullName(context)
-            )
+
+
+        if(threads!= null && users!=null) {
+            items(threads ?: emptyList()) { pair ->
+                ThreadItem(
+                    thread = pair,
+                    users = users!!,
+                    navHostController = navHostController,
+                    userId = SharedPref.getFullName(context)
+                )
+            }
         }
-   }
+    }
+
+
+
+
+
+
+
+
+
 }
-
-
-

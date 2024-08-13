@@ -104,7 +104,7 @@ fun AddThreads(navHostController: NavHostController)
     }
 
    LaunchedEffect(isPosted ) {
-       if (isPosted!!)
+       if (isPosted)
        {
            thread = ""
            imageUri = null
@@ -326,7 +326,7 @@ fun BasicTextFieldWithHint(hint : String,
         BasicTextField(
             value = value,
             onValueChange =onValueChange,
-            textStyle = TextStyle.Default.copy(color = Color.Yellow),
+            textStyle = TextStyle.Default.copy(color = Color.Black, fontSize = 17.sp),
             modifier = Modifier.fillMaxWidth())
 
     }

@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import java.util.UUID
 
@@ -53,8 +54,9 @@ class AuthViewModel : ViewModel() {
     }
 
     private fun getData(uid: String, context: Context) {
-        userRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
 
+
+        userRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot)
             {
               val userData = snapshot.getValue(UserModel::class.java)
@@ -121,7 +123,25 @@ class AuthViewModel : ViewModel() {
                          uid: String?,
                          context :Context
     ){
-        val userData = UserModel(email, password, fullName, role, imageUrl,uid!!)
+
+
+        val firestoreDb = Firebase.firestore
+        val followersRef = firestoreDb.collection("followers").document(uid!!)
+        val followingRef = firestoreDb.collection("following").document(uid!!)
+
+        followingRef.set(mapOf("followingIds" to listOf<String>()))
+        followersRef.set(mapOf("followerIds" to listOf<String>()))
+
+
+
+        val userData = UserModel(
+            email,
+            password,
+            fullName,
+            role,
+            imageUrl,
+            uid!!,
+        )
 
         userRef.child(uid).setValue(userData)
             .addOnCompleteListener { task ->

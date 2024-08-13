@@ -174,7 +174,7 @@ fun Register(navHostController: NavHostController)
         Box(modifier = Modifier.height(25.dp))
 
         OutlinedTextField(value = fullName, onValueChange =  {  fullName = it }, label = {
-            Text(text = "UserName",style = TextStyle(
+            Text(text = "fullName",style = TextStyle(
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Serif,
                 color = Color.DarkGray,
@@ -208,7 +208,7 @@ fun Register(navHostController: NavHostController)
         Box(modifier = Modifier.height(5.dp))
 
         OutlinedTextField(value = role, onValueChange =  {  role = it }, label = {
-            Text(text = "Bio",style = TextStyle(
+            Text(text = "username",style = TextStyle(
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Serif,
                 color = Color.DarkGray,

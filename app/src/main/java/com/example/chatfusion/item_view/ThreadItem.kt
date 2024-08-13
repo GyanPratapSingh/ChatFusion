@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -107,7 +108,7 @@ fun ThreadItem(
                 }
             }
         }
-        Divider(color = Color.LightGray, thickness = 1.dp)
+        HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
     }
 }
 
